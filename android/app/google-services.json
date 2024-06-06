@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "445799603572",
+    "project_id": "codeloomapp",
+    "storage_bucket": "codeloomapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445799603572:android:6a1d98990f76c8e2ab2021",
+        "android_client_info": {
+          "package_name": "com.example.code_loom_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_3gyo7aeHMZCgB4OLgLLbESl0-AxQRIk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
