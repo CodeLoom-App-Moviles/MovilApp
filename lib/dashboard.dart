@@ -1,3 +1,4 @@
+import 'package:code_loom_app/about-us.dart';
 import 'package:code_loom_app/setting.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ class dashboard extends StatelessWidget {
       appBar: AppBar(
         title: Text("Inicio"),
         backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -32,7 +34,7 @@ class dashboard extends StatelessWidget {
               padding: const EdgeInsets.all(20.0),
               child: InkWell(
                 onTap: () {
-                  //Navigator.push(context, MaterialPageRoute(builder: (context) => nosotros()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => aboutUs()));
                 },
               child: Card(
                 color: Color(0xD7ADF4FF),
@@ -48,6 +50,7 @@ class dashboard extends StatelessWidget {
                         height: 140,
                         width: 140,
                       ),
+
                     ),
                     SizedBox(
                       height: 5,
