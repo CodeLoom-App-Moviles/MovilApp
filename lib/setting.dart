@@ -3,13 +3,15 @@ import 'package:code_loom_app/login.dart';
 import 'package:flutter/material.dart';
 
 class setting extends StatefulWidget {
-  const setting({super.key});
+  final Map<String, dynamic> clienteData;
+  setting(this.clienteData);
 
   @override
   State<setting> createState() => _settingState();
 }
 
 class _settingState extends State<setting> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +34,7 @@ class _settingState extends State<setting> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "Nombre del Usuario",
+                      "${widget.clienteData['nombre']}",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -40,7 +42,7 @@ class _settingState extends State<setting> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      "correo@example.com",
+                      "${widget.clienteData['email']}",
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[600],

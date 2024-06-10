@@ -1,3 +1,4 @@
+import 'package:code_loom_app/dashboard.dart';
 import 'package:code_loom_app/register.dart';
 import 'package:code_loom_app/registerProveedor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,10 +25,17 @@ class _loginState extends State<login> with SingleTickerProviderStateMixin {
       CollectionReference ref= FirebaseFirestore.instance.collection('Clients');
       QuerySnapshot cliente = await ref.get();
 
-      if(cliente.docs.length != 0){
+      if(cliente.docs.isNotEmpty){
         for(var cursor in cliente.docs){
           if(cursor.get('Email') == email.text && cursor.get('Password') == password.text){
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => setting()));
+            var clienteData = {
+              'email': cursor.get('Email'),
+              'nombre': cursor.get('Nombre'),
+            };
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => dashboard(clienteData)),
+            );
             print("Cliente Encontrado");
           }else{
             print("No se encontrooo....");
