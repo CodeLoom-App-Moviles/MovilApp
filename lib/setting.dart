@@ -93,12 +93,7 @@ class _settingState extends State<setting> {
                   leading: Icon(Icons.logout),
                   title: Text("Salir de la sesión"),
                   onTap: () {
-                    Navigator.push(context,
-                    MaterialPageRoute(builder: (BuildContext context){
-                      return login();
-                    }
-                    )     );
-
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => login()));
                   },
                 ),
               ],

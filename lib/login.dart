@@ -1,6 +1,7 @@
 import 'package:code_loom_app/register.dart';
 import 'package:code_loom_app/registerProveedor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:code_loom_app/setting.dart';
 import 'package:flutter/material.dart';
 
 class login extends StatefulWidget {
@@ -26,7 +27,7 @@ class _loginState extends State<login> with SingleTickerProviderStateMixin {
       if(cliente.docs.length != 0){
         for(var cursor in cliente.docs){
           if(cursor.get('Email') == email.text && cursor.get('Password') == password.text){
-            //Navigator.push(context, MaterialPageRoute(builder: (context) => dashboard()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => setting()));
             print("Cliente Encontrado");
           }else{
             print("No se encontrooo....");
