@@ -17,6 +17,8 @@ class _settingState extends State<setting> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Ajustes"),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
       ),
       body: Column(
         children: <Widget>[
