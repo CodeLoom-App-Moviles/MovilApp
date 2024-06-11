@@ -1,4 +1,5 @@
 import 'package:code_loom_app/login.dart';
+import 'package:code_loom_app/qualify.dart';
 import 'package:code_loom_app/register.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: login(),
+      home: qualify(),
     );
   }
 }
