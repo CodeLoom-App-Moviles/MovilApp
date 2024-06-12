@@ -1,5 +1,6 @@
 
 import 'package:code_loom_app/login.dart';
+import 'package:code_loom_app/providers.dart';
 import 'package:flutter/material.dart';
 
 class setting extends StatefulWidget {
@@ -69,6 +70,7 @@ class _settingState extends State<setting> {
                   leading: Icon(Icons.people),
                   title: Text("Proveedores disponibles"),
                   onTap: () {
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => providers()));
                     //
                   },
                 ),

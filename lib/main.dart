@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:code_loom_app/login.dart';
 import 'package:code_loom_app/qualify.dart';
 import 'package:code_loom_app/register.dart';
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: qualify(),
+      home: login(),
     );
   }
 }
