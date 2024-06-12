@@ -1,4 +1,4 @@
-
+import 'package:code_loom_app/services.dart';
 import 'package:code_loom_app/login.dart';
 import 'package:code_loom_app/providers.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +79,11 @@ class _settingState extends State<setting> {
                   title: Text("Mis servicios"),
                   onTap: () {
                     // Acción al hacer clic en esta opción
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (BuildContext context){
+                          return services();
+                        }
+                        )     );
                   },
                 ),
                 ListTile(
