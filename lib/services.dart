@@ -57,50 +57,6 @@ class _servicesState extends State<services> {
                   const ListTile(
                     title: Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: Text('NTT Data', style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.deepPurpleAccent,
-                      ),),
-                    ),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 250,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage('https://apn-portal.file.force.com/servlet/servlet.ImageServer?id=0158W000008e3WgQAI&oid=00DE0000000c48tMAA'),
-                        fit: BoxFit.fill,
-                      ),
-                      shape: BoxShape.rectangle,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
-                      Text('4.5'),
-                      const SizedBox(width: 8),
-                      TextButton(
-                        child: const Text('COTIZAR'),
-                        onPressed: () {/* ... */},
-                      ),
-                      const SizedBox(width: 8),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Card(
-              child:Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const ListTile(
-                    title: Padding(
-                      padding: EdgeInsets.all(8.0),
                       child: Text('Globant', style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -127,14 +83,10 @@ class _servicesState extends State<services> {
                         color: Colors.amber,
                       ),
                       Text('4.5'),
-                      const SizedBox(width: 8),
-                      TextButton(
-                        child: const Text('COTIZAR'),
-                        onPressed: () {/* ... */},
-                      ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 20),
                     ],
                   ),
+                  SizedBox(height: 8),
                 ],
               ),
             ),

@@ -1,3 +1,4 @@
+import 'package:code_loom_app/payment.dart';
 import 'package:flutter/material.dart';
 
 class providersDetailsNTT extends StatefulWidget {
@@ -74,7 +75,10 @@ class _providersDetailsState extends State<providersDetailsNTT>{
                 child: IconButton(
                   icon: const Icon(Icons.add_call),
                   color: Colors.white,
-                  onPressed: (){},
+                  onPressed: (){
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context)=> PaymentView()));
+                  },
                 ),
               ),
             ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+//import 'package:url_launcher/url_launcher.dart';
 
 
 class qualify extends StatelessWidget {
@@ -46,8 +46,8 @@ class qualify extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                     vertical: 12,
                     horizontal: 24),
-              ),
-              onPressed: () => _launchURL('https://www.facebook.com/'),
+              ), onPressed: () {  },
+              //onPressed: () => _launchURL('https://www.facebook.com/'),
             ),
 
           ],
@@ -58,10 +58,10 @@ class qualify extends StatelessWidget {
   }
 }
 
-void _launchURL(String url) async {
+/*void _launchURL(String url) async {
   if (await canLaunch(url)) {
     await launch(url);
   } else {
     throw 'Could not launch $url';
   }
-}
+}*/

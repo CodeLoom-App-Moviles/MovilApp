@@ -1,6 +1,9 @@
+import 'package:code_loom_app/list_solicitud.dart';
+import 'package:code_loom_app/qualify.dart';
 import 'package:code_loom_app/services.dart';
 import 'package:code_loom_app/login.dart';
 import 'package:code_loom_app/providers.dart';
+import 'package:code_loom_app/solicitud.dart';
 import 'package:flutter/material.dart';
 
 class setting extends StatefulWidget {
@@ -61,9 +64,9 @@ class _settingState extends State<setting> {
               children: <Widget>[
                 ListTile(
                   leading: Icon(Icons.star),
-                  title: Text("Lo más destacado"),
+                  title: Text("Tus solicitudes"),
                   onTap: () {
-
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ListSolicitudView()));
                   },
                 ),
                 ListTile(
@@ -79,7 +82,7 @@ class _settingState extends State<setting> {
                   title: Text("Mis servicios"),
                   onTap: () {
                     // Acción al hacer clic en esta opción
-                    Navigator.push(context,
+                    Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (BuildContext context){
                           return services();
                         }
@@ -90,7 +93,7 @@ class _settingState extends State<setting> {
                   leading: Icon(Icons.feedback),
                   title: Text("Dejanos tus comentarios"),
                   onTap: () {
-                    // Acción al hacer clic en esta opción
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => qualify()));
                   },
                 ),
                 ListTile(
