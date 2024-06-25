@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SolicitudView extends StatefulWidget {
+  final String softwareId;
+
+  SolicitudView({required this.softwareId});
+
   @override
   _SolicitudViewState createState() => _SolicitudViewState();
 }
@@ -17,9 +22,14 @@ class _SolicitudViewState extends State<SolicitudView> {
         _isSending = true;
       });
 
+      // Obtén el ID del usuario actual
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+
       await FirebaseFirestore.instance.collection('requests').add({
         'request': _requestController.text,
         'timestamp': FieldValue.serverTimestamp(),
+        'userId': userId, // Agrega el ID del usuario a la solicitud
+        'softwareId': widget.softwareId, // Agrega el ID del software a la solicitud
       });
 
       setState(() {

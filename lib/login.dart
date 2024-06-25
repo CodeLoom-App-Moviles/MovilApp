@@ -1,9 +1,10 @@
 import 'package:code_loom_app/dashboard.dart';
+import 'package:code_loom_app/dashboardProvider.dart';
 import 'package:code_loom_app/register.dart';
 import 'package:code_loom_app/registerProveedor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:code_loom_app/setting.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class login extends StatefulWidget {
   const login({super.key});
@@ -13,67 +14,53 @@ class login extends StatefulWidget {
 }
 
 class _loginState extends State<login> with SingleTickerProviderStateMixin {
-
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   final firebase = FirebaseFirestore.instance;
 
   late TabController _tabController;
 
-  validarCliente() async{
-    try{
-      CollectionReference ref= FirebaseFirestore.instance.collection('Clients');
-      QuerySnapshot cliente = await ref.get();
-
-      if(cliente.docs.isNotEmpty){
-        for(var cursor in cliente.docs){
-          if(cursor.get('Email') == email.text && cursor.get('Password') == password.text){
-            var clienteData = {
-              'email': cursor.get('Email'),
-              'nombre': cursor.get('Nombre'),
-            };
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => dashboard(clienteData)),
-            );
-            print("Cliente Encontrado");
-          }else{
-            print("No se encontrooo....");
-          }
-
-        }
-
-      }else{
-        print("Cliente no encontrado");
-      }
-
-
-    }catch(e){
-      print(e.toString());
-    }
-
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
-  validarProveedor() async{
-    try{
-      CollectionReference ref= FirebaseFirestore.instance.collection('Suppliers');
-      QuerySnapshot proveedor = await ref.get();
+  Future<void> validarCliente() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.text,
+        password: password.text,
+      );
+      User user = userCredential.user!;
 
-      if(proveedor.docs.length != 0){
-        for(var cursor in proveedor.docs){
-          if(cursor.get('Email') == email.text && cursor.get('Password') == password.text){
-            //Navigator.push(context, MaterialPageRoute(builder: (context) => dashboardProveedor()));
-            print("Proveedor Encontrado");
-          }else{
-            print("No se encontrooo....");
-          }
-        }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => dashboard(user: user)),
+      );
+    } catch (e) {
+      _showMessage("No se encontró cliente con las credenciales proporcionadas.");
+    }
+  }
 
-      }else{
-        print("Proveedor no encontrado");
-      }
-    }catch(e){
-      print(e.toString());
+  Future<void> validarProveedor() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.text,
+        password: password.text,
+      );
+      User user = userCredential.user!;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => dashboardProvider(user: user)),
+      );
+    } catch (e) {
+      _showMessage("No se encontró proveedor con las credenciales proporcionadas.");
     }
   }
 
@@ -192,9 +179,9 @@ class _loginState extends State<login> with SingleTickerProviderStateMixin {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    if(userType=="Cliente"){
+                    if (userType == "Cliente") {
                       validarCliente();
-                    }else{
+                    } else {
                       validarProveedor();
                     }
                   },

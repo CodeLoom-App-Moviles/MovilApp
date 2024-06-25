@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class PaymentView extends StatefulWidget {
+  final String serviceId;
+
+  PaymentView({required this.serviceId});
+
   @override
   _PaymentViewState createState() => _PaymentViewState();
 }
@@ -70,7 +74,7 @@ class _PaymentViewState extends State<PaymentView> with SingleTickerProviderStat
         });
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SolicitudView()),
+          MaterialPageRoute(builder: (context) => SolicitudView(softwareId: widget.serviceId)),
         );
       });
     }

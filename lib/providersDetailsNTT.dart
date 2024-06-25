@@ -1,90 +1,90 @@
 import 'package:code_loom_app/payment.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class providersDetailsNTT extends StatefulWidget {
-  const providersDetailsNTT({super.key});
+class providersDetailsNTT extends StatelessWidget {
+  final String serviceId;
+
+  providersDetailsNTT(this.serviceId);
 
   @override
-  State<providersDetailsNTT> createState() => _providersDetailsState();
-}
-
-class _providersDetailsState extends State<providersDetailsNTT>{
-  @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        title: Text('NTT Data',textAlign: TextAlign.center,),
+        title: Text('Detalles del Servicio'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Image.asset('assets/img/nttdata.gif'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/img/providerntt.png',width: 300,height: 100,)
-            ],
-          ),
-          Text('Somos una empresa dedicada a brindar soluciones de software eficiente.',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18)),
-          Table(
-            columnWidths: const<int, TableColumnWidth>{
-              1: FlexColumnWidth(),
-              2: FixedColumnWidth(64),
-            },
-            children: <TableRow>[
-              TableRow(
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    height: 64,
-                    child: Text('Aplicacion Web'),
+      body: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance.collection('software').doc(serviceId).get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Ocurrió un error: ${snapshot.error}'));
+          }
+
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return Center(child: Text('No se encontró el servicio.'));
+          }
+
+          var service = snapshot.data!.data() as Map<String, dynamic>;
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Center(
+                  child: Image.network(
+                    service['logoUrl'],
+                    height: 200,
+                    width: 200,
+                    fit: BoxFit.cover,
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    height: 64,
-                    child: Text('Creamos tu aplicacion web responsive')
-                  )
-                ]
-              ),
-              TableRow(
-                  children: <Widget>[
-                    Container(
-                      alignment: Alignment.center,
-                      height: 64,
-                      child: Text('Servicio Cloud'),
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      height: 64,
-                      child: Text('Te brindamos un servicio de nube para tu empresa')
-                    )
-                  ]
-              ),
-            ],
-          ),
-          Material(
-            child: Center(
-              child: Ink(
-                decoration: const ShapeDecoration(shape: CircleBorder(),color: Colors.green),
-                child: IconButton(
-                  icon: const Icon(Icons.add_call),
-                  color: Colors.white,
-                  onPressed: (){
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context)=> PaymentView()));
-                  },
                 ),
-              ),
+                SizedBox(height: 20),
+                Text(
+                  service['name'],
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Rubro: ${service['category']}',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Descripción: ${service['description']}',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Precio: S/ ${service['price']}',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentView(serviceId: serviceId),
+                        ),
+                      );
+                    },
+                    child: Text('Contratar'),
+                  ),
+                ),
+              ],
             ),
-          ),
-          Text('Contactar a la empresa')
-        ],
+          );
+        },
       ),
     );
   }
