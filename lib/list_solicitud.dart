@@ -2,6 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ListSolicitudView extends StatelessWidget {
+  final String userId;
+
+  ListSolicitudView({required this.userId});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,7 +13,11 @@ class ListSolicitudView extends StatelessWidget {
         title: Text('Lista de Solicitudes'),
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('requests').orderBy('timestamp', descending: true).snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('requests')
+            .where('userId', isEqualTo: userId)
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());

@@ -1,88 +1,92 @@
 import 'package:code_loom_app/providersDetailsNTT.dart';
-import 'package:code_loom_app/qualify.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class providers extends StatefulWidget {
-
+class Providers extends StatefulWidget {
   @override
-  State<providers> createState() => _providersState();
+  State<Providers> createState() => _ProvidersState();
 }
 
-class _providersState extends State<providers> {
+class _ProvidersState extends State<Providers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white60,
-        
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            Text('Proveedores disponibles',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 28,
-            ),)
-          ,
-            Card.outlined(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Image.asset('assets/img/providerntt.png',
-                  scale: 0.5,),
-                  const ListTile(
-                    leading: Icon(Icons.album),
-                    title: Text('NTT DATA PERU'),
-                    subtitle: Text('Consultora multinacional de negocios y tecnología'),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      TextButton(onPressed: (){
-                        Navigator.push(context,
-                        MaterialPageRoute(builder: (context)=> providersDetailsNTT()));
-                      }, child: const Text('CONSULTAR')),
-                      const SizedBox( width: 8),
-                    ],
-                  )
-                ],
-              )
-              ,
-            ),
-            Card.outlined(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Image.asset('assets/img/globant_logo.png',
-                    scale: 0.5,),
-                  const ListTile(
-                    leading: Icon(Icons.album),
-                    title: Text('GLOBANT'),
-                    subtitle: Text('Como empresa nativa digital, nos apasiona la forma en que la tecnología puede cambiar industrias, experiencias y vidas.'),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      TextButton(onPressed: (){}, child: const Text('CONSULTAR')),
-                      const SizedBox( width: 8),
-                    ],
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.menu),
+        title: Text('Proveedores disponibles'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
-            return qualify();
-          }));
+      ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('software').snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Ocurrió un error: ${snapshot.error}'));
+          }
+
+          if (snapshot.data!.docs.isEmpty) {
+            return Center(child: Text('No se encontraron servicios.'));
+          }
+
+          return ListView.builder(
+            padding: EdgeInsets.all(15.0),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              var service = snapshot.data!.docs[index];
+              return Card(
+                margin: EdgeInsets.symmetric(vertical: 10.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Center(
+                        child: Image.network(
+                          service['logoUrl'],
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        service['name'],
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text('Rubro: ${service['category']}'),
+                      SizedBox(height: 10),
+                      Text('Precio: S/ ${service['price']}'),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => providersDetailsNTT(service.id),
+                                ),
+                              );
+                            },
+                            child: const Text('CONSULTAR'),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
         },
       ),
     );

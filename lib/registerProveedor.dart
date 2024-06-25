@@ -1,6 +1,7 @@
 import 'package:code_loom_app/login.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class registerProveedor extends StatefulWidget {
   const registerProveedor({super.key});
@@ -16,156 +17,185 @@ class _registerProveedorState extends State<registerProveedor> {
   TextEditingController repassword = TextEditingController();
   final firebase = FirebaseFirestore.instance;
 
-  registroProveedor() async {
+  Future<void> registroProveedor() async {
     try {
-      await firebase.collection('Suppliers').doc().set({
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.text,
+        password: password.text,
+      );
+
+      await userCredential.user!.updateProfile(displayName: name.text);
+      await userCredential.user!.reload();
+
+      await firebase.collection('Suppliers').doc(userCredential.user?.uid).set({
         "Nombre": name.text,
         "Email": email.text,
-        "Password": password.text
       });
+
+      _showMessage("Registro exitoso");
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => login()),
+            (Route<dynamic> route) => false,
+      );
     } catch (e) {
       print(e.toString());
+      _showMessage("Error al registrarse: ${e.toString()}");
     }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Text(
-                'Registrate Proveedor',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                ),
+      appBar: AppBar(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(
+              'Registrate Proveedor',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
               ),
-              SizedBox(
-                height: 10,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: TextField(
-                      controller: name,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        hintText: 'Ingrese su nombre',
-                        labelText: 'Nombre',
-                      ),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: TextField(
+                    controller: name,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      hintText: 'Ingrese su nombre',
+                      labelText: 'Nombre',
                     ),
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: TextField(
-                      controller: email,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        hintText: 'Ingrese su email',
-                        labelText: 'Correo Electrónico',
-                      ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: TextField(
+                    controller: email,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      hintText: 'Ingrese su email',
+                      labelText: 'Correo Electrónico',
                     ),
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: TextField(
-                      controller: password,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        hintText: 'Ingrese su contraseña',
-                        labelText: 'Contraseña',
-                      ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: TextField(
+                    controller: password,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      hintText: 'Ingrese su contraseña',
+                      labelText: 'Contraseña',
                     ),
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: TextField(
-                      controller: repassword,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        hintText: 'Ingrese su contraseña nuevamente',
-                        labelText: 'Repetir Contraseña',
-                      ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: TextField(
+                    controller: repassword,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      hintText: 'Ingrese su contraseña nuevamente',
+                      labelText: 'Repetir Contraseña',
                     ),
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if ((password.text == repassword.text) && name.text!="" &&
-                              email.text!="" && password!="" && repassword!="") {
-                            registroProveedor();
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => login()));
-                          } else {
-                            print("Llene todas las celdas");
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0x993949AB),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if ((password.text == repassword.text) &&
+                            name.text.isNotEmpty &&
+                            email.text.isNotEmpty &&
+                            password.text.isNotEmpty &&
+                            repassword.text.isNotEmpty) {
+                          registroProveedor();
+                        } else {
+                          _showMessage("Llene todas las celdas y asegúrese de que las contraseñas coincidan.");
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0x993949AB),
+                      ),
+                      child: Text(
+                        'Registrarme',
+                        style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                        child: Text(
-                          'Registrarme',
-                          style: TextStyle(
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:code_loom_app/login.dart';
 import 'package:flutter/material.dart';
 
@@ -16,16 +17,40 @@ class _registerState extends State<register> {
   TextEditingController repassword = TextEditingController();
   final firebase = FirebaseFirestore.instance;
 
-  registroCliente() async {
+  Future<void> registroCliente() async {
     try {
-      await firebase.collection('Clients').doc().set({
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.text,
+        password: password.text,
+      );
+
+      await userCredential.user!.updateProfile(displayName: name.text);
+      await userCredential.user!.reload();
+
+      await firebase.collection('Clients').doc(userCredential.user?.uid).set({
         "Nombre": name.text,
         "Email": email.text,
-        "Password": password.text
       });
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => login()),
+            (Route<dynamic> route) => false,
+      );
     } catch (e) {
       print(e.toString());
+      _showMessage("Error al registrarse: ${e.toString()}");
     }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -101,6 +126,7 @@ class _registerState extends State<register> {
                   padding: const EdgeInsets.all(5.0),
                   child: TextField(
                     controller: password,
+                    obscureText: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5)),
@@ -122,6 +148,7 @@ class _registerState extends State<register> {
                   padding: const EdgeInsets.all(5.0),
                   child: TextField(
                     controller: repassword,
+                    obscureText: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5)),
@@ -139,12 +166,14 @@ class _registerState extends State<register> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        if ((password.text == repassword.text) && name.text!="" &&
-                        email.text!="" && password!="" && repassword!="") {
+                        if ((password.text == repassword.text) &&
+                            name.text.isNotEmpty &&
+                            email.text.isNotEmpty &&
+                            password.text.isNotEmpty &&
+                            repassword.text.isNotEmpty) {
                           registroCliente();
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => login()));
                         } else {
-                          print("Contraseña y Repetir contraseña tienen que ser las mismas");
+                          _showMessage("Llene todas las celdas y asegúrese de que las contraseñas coincidan.");
                         }
                       },
                       style: ElevatedButton.styleFrom(
