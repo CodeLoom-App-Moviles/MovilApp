@@ -16,6 +16,7 @@ class ListSolicitudView extends StatelessWidget {
         stream: FirebaseFirestore.instance
             .collection('requests')
             .where('softwareId', isEqualTo: softwareId)
+            .where('status', isEqualTo: 'pending')
             .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -40,13 +41,13 @@ class ListSolicitudView extends StatelessWidget {
                         await FirebaseFirestore.instance
                             .collection('requests')
                             .doc(doc.id)
-                            .delete();
+                            .update({'status': 'delivered'});
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Servicio entregado')),
                         );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error al eliminar la solicitud: $e')),
+                          SnackBar(content: Text('Error al actualizar la solicitud: $e')),
                         );
                       }
                     },

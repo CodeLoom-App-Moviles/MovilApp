@@ -32,7 +32,8 @@ class _loginState extends State<login> with SingleTickerProviderStateMixin {
 
   Future<void> validarCliente() async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email.text,
         password: password.text,
       );
@@ -43,13 +44,15 @@ class _loginState extends State<login> with SingleTickerProviderStateMixin {
         MaterialPageRoute(builder: (context) => dashboard(user: user)),
       );
     } catch (e) {
-      _showMessage("No se encontró cliente con las credenciales proporcionadas.");
+      _showMessage(
+          "No se encontró cliente con las credenciales proporcionadas.");
     }
   }
 
   Future<void> validarProveedor() async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email.text,
         password: password.text,
       );
@@ -60,7 +63,8 @@ class _loginState extends State<login> with SingleTickerProviderStateMixin {
         MaterialPageRoute(builder: (context) => dashboardProvider(user: user)),
       );
     } catch (e) {
-      _showMessage("No se encontró proveedor con las credenciales proporcionadas.");
+      _showMessage(
+          "No se encontró proveedor con las credenciales proporcionadas.");
     }
   }
 
@@ -113,118 +117,120 @@ class _loginState extends State<login> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildLoginTab(BuildContext context, String userType) {
-    return Column(
-      children: [
-        Image.asset(
-          'assets/img/logo.png',
-          height: 120,
-          width: 120,
-        ),
-        SizedBox(
-          height: 5,
-        ),
-        Text(
-          'Inicia Sesión como $userType',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Image.asset(
+            'assets/img/logo.png',
+            height: 120,
+            width: 120,
           ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+            'Inicia Sesión como $userType',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: TextField(
-                controller: email,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Email',
-                ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
               ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: TextField(
-                controller: password,
-                obscureText: true,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Contraseña',
-                ),
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (userType == "Cliente") {
-                      validarCliente();
-                    } else {
-                      validarProveedor();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0x993949AB),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: TextField(
+                  controller: email,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Email',
                   ),
-                  child: Text(
-                    'Iniciar Sesión',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: TextField(
+                  controller: password,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Contraseña',
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (userType == "Cliente") {
+                        validarCliente();
+                      } else {
+                        validarProveedor();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0x993949AB),
                     ),
+                    child: Text(
+                      'Iniciar Sesión',
+                      style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '¿Estás Registrado? ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              GestureDetector(
+                onTap: _navigateToRegister,
+                child: Text(
+                  'Registrate ahora',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Color(0x993949AB),
                   ),
                 ),
               ),
             ],
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '¿Estás Registrado? ',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-            GestureDetector(
-              onTap: _navigateToRegister,
-              child: Text(
-                'Registrate ahora',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Color(0x993949AB),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

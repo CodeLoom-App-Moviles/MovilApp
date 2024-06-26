@@ -28,6 +28,7 @@ class _SolicitudViewState extends State<SolicitudView> {
         'request': _requestController.text,
         'timestamp': FieldValue.serverTimestamp(),
         'userId': currentUser!.uid,
+        'status' : 'pending',
         'softwareId': widget.softwareId,
       });
 

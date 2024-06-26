@@ -1,4 +1,5 @@
 import 'package:code_loom_app/AddSoftware.dart';
+import 'package:code_loom_app/qualify.dart';
 import 'package:code_loom_app/softwares.dart';
 import 'package:code_loom_app/list_solicitud.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +104,7 @@ class settingsProvider extends StatelessWidget {
                   leading: Icon(Icons.feedback),
                   title: Text("Dejanos tus comentarios"),
                   onTap: () {
-                    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => qualify()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => qualify()));
                   },
                 ),
                 ListTile(
