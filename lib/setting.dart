@@ -74,7 +74,7 @@ class setting extends StatelessWidget {
                     // Acción al hacer clic en esta opción
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (BuildContext context) {
-                      return services();
+                      return services(user: user);
                     }));
                   },
                 ),

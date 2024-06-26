@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ListSolicitudView extends StatelessWidget {
-  final String userId;
+  final String softwareId;
 
-  ListSolicitudView({required this.userId});
+  ListSolicitudView({required this.softwareId});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class ListSolicitudView extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('requests')
-            .where('userId', isEqualTo: userId)
+            .where('softwareId', isEqualTo: softwareId)
             .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -34,6 +34,24 @@ class ListSolicitudView extends StatelessWidget {
                   subtitle: Text(doc['timestamp'] != null
                       ? (doc['timestamp'] as Timestamp).toDate().toString()
                       : 'Sin fecha'),
+                  trailing: ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        await FirebaseFirestore.instance
+                            .collection('requests')
+                            .doc(doc.id)
+                            .delete();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Servicio entregado')),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error al eliminar la solicitud: $e')),
+                        );
+                      }
+                    },
+                    child: Text('Entregar'),
+                  ),
                 ),
               );
             }).toList(),

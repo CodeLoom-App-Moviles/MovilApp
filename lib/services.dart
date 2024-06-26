@@ -1,99 +1,83 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class services extends StatefulWidget {
-  const services({super.key});
+class services extends StatelessWidget {
+  final User user;
 
-  @override
-  State<services> createState() => _servicesState();
-}
+  services({required this.user});
 
-class _servicesState extends State<services> {
+  Future<DocumentSnapshot> _getSoftwareData(String softwareId) {
+    return FirebaseFirestore.instance.collection('software').doc(softwareId).get();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle_rounded),
-            color: Colors.deepPurpleAccent,
-            onPressed: () {
-
-            },
-          )
-        ],
+        title: Text('Mis Servicios Contratados'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Text('Mis servicios', style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 30,
-            ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            SearchAnchor.bar(
-                barHintText: 'Search services',
-                viewBackgroundColor: Color(0x993949AB),
-                suggestionsBuilder: (BuildContext context, SearchController controller) {
-                  return List<ListTile>.generate(5, (int index) {
-                    final String item = 'item $index';
-                    return ListTile(
-                      title: Text(item),
-                      onTap: () {
-                        setState(() {
-                          controller.closeView(item);
-                        });
-                      },
-                    );
-                  });
-                }),
-            Card(
-              child:Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const ListTile(
-                    title: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('Globant', style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.deepPurpleAccent,
-                      ),),
-                    ),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 250,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Globant_Logo.svg/2560px-Globant_Logo.svg.png'),
-                        fit: BoxFit.fill,
-                      ),
-                      shape: BoxShape.rectangle,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
-                      Text('4.5'),
-                      SizedBox(width: 20),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('requests')
+            .where('userId', isEqualTo: user.uid)
+            .where('status', isEqualTo: 'delivered')
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
 
+          return ListView(
+            padding: EdgeInsets.all(16.0),
+            children: snapshot.data!.docs.map((doc) {
+              var softwareId = doc['softwareId'];
+              return FutureBuilder<DocumentSnapshot>(
+                future: _getSoftwareData(softwareId),
+                builder: (context, softwareSnapshot) {
+                  if (softwareSnapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (softwareSnapshot.hasError) {
+                    return Center(child: Text('Ocurrió un error: ${softwareSnapshot.error}'));
+                  }
+
+                  if (!softwareSnapshot.hasData || !softwareSnapshot.data!.exists) {
+                    return Center(child: Text('No se encontró el software.'));
+                  }
+
+                  var software = softwareSnapshot.data!.data() as Map<String, dynamic>;
+
+                  return Card(
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    child: ListTile(
+                      leading: Image.network(
+                        software['logoUrl'],
+                        height: 50,
+                        width: 50,
+                        fit: BoxFit.cover,
+                      ),
+                      title: Text(software['name']),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text('Rubro: ${software['category']}'),
+                          Text('Descripción: ${software['description']}'),
+                          Text('Precio: S/ ${software['price']}'),
+                          Text('Fecha de solicitud: ${doc['timestamp'] != null
+                              ? (doc['timestamp'] as Timestamp).toDate().toString()
+                              : 'Sin fecha'}'),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          );
+        },
+      ),
     );
   }
 }
