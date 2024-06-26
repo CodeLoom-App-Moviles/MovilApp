@@ -22,14 +22,13 @@ class _SolicitudViewState extends State<SolicitudView> {
         _isSending = true;
       });
 
-      // Obtén el ID del usuario actual
-      final userId = FirebaseAuth.instance.currentUser!.uid;
+      User? currentUser = FirebaseAuth.instance.currentUser;
 
       await FirebaseFirestore.instance.collection('requests').add({
         'request': _requestController.text,
         'timestamp': FieldValue.serverTimestamp(),
-        'userId': userId, // Agrega el ID del usuario a la solicitud
-        'softwareId': widget.softwareId, // Agrega el ID del software a la solicitud
+        'userId': currentUser!.uid,
+        'softwareId': widget.softwareId,
       });
 
       setState(() {

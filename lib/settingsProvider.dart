@@ -3,6 +3,7 @@ import 'package:code_loom_app/softwares.dart';
 import 'package:code_loom_app/list_solicitud.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login.dart';
 
 class settingsProvider extends StatelessWidget {
@@ -60,11 +61,22 @@ class settingsProvider extends StatelessWidget {
                 ListTile(
                   leading: Icon(Icons.star),
                   title: Text("Tus solicitudes"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ListSolicitudView(userId: user.uid)),
-                    );
+                  onTap: () async {
+                    var softwareList = await FirebaseFirestore.instance
+                        .collection('software')
+                        .where('userId', isEqualTo: user.uid)
+                        .get();
+                    if (softwareList.docs.isNotEmpty) {
+                      var softwareId = softwareList.docs.first.id; // Asumiendo que el proveedor tiene al menos un software
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ListSolicitudView(softwareId: softwareId)),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('No tienes software registrado')),
+                      );
+                    }
                   },
                 ),
                 ListTile(
